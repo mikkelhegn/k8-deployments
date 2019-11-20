@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aci-helloworld-ca
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: aci-helloworld-ca
+  template:
+    metadata:
+      labels:
+        app: aci-helloworld-ca
+    spec:
+      containers:
+      - name: aci-helloworld-ca
+        image: microsoft/aci-helloworld
+        resources:
+          requests:
+            memory: "1000M"
+            cpu: "500m"

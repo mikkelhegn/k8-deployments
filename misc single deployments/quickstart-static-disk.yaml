@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample4
+  labels:
+    app: sample4
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: sample4
+      labels:
+        app: sample4
+    spec:
+      containers:
+      - name: sample4
+        image: mcr.microsoft.com/dotnet/framework/samples:aspnetapp
+        resources:
+          limits:
+            cpu: 1
+            memory: 800M
+          requests:
+            cpu: 1
+            memory: 300M
+        ports:
+          - containerPort: 80
+        volumeMounts:
+        - name: azure
+          mountPath: /mnt/azure
+      tolerations:
+      - key: "windows"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule" 
+      volumes:
+          - name: azure
+            azureDisk:
+              kind: Managed
+              diskName: aksdisk5
+              diskURI: [DiskID]
+              fsType: NTFS
+  selector:
+    matchLabels:
+      app: sample4

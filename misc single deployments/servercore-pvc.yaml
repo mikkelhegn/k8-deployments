@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: corevolume
+  labels:
+    app: corevolume
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: corevolume
+      labels:
+        app: corevolume
+    spec:
+      containers:
+      - name: corevolume
+        image: mcr.microsoft.com/windows/servercore/iis:windowsservercore-ltsc2019
+        volumeMounts:
+        - mountPath: C:\logs
+          name: logs
+      tolerations:
+      - key: "windows"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule" 
+      volumes:
+      - name: logs
+        persistentVolumeClaim:
+          claimName: azure-default-disk
+  selector:
+    matchLabels:
+      app: corevolume
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: azure-default-disk
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: default
+  resources:
+    requests:
+      storage: 5Gi

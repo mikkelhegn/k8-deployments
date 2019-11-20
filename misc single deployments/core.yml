@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: core
+  labels:
+    app: core
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: core
+      labels:
+        app: core
+    spec:
+      containers:
+      - name: core
+        image: mcr.microsoft.com/windows/servercore:ltsc2019
+        command:
+          - ping
+        args:
+          - "-t localhost"
+        resources:
+          requests:
+            cpu: 1
+            memory: 1024M
+          limits:
+            cpu: 1
+            memory: 1024M
+      tolerations:
+      - key: "windows"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+  selector:
+    matchLabels:
+      app: core

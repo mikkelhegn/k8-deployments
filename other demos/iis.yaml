@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iis-deployment
+  labels:
+    app: iis
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: iis-pod
+      labels:
+        app: iis
+    spec:
+      containers:
+      - name: iis-container
+        image: microsoft/iis:windowsservercore
+        ports:
+          - containerPort: 80
+      tolerations:
+      - key: "windows"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+  selector:
+    matchLabels:
+      app: iis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iis-service
+  labels:
+    app: iis
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: iis
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: iis-ingress
+  labels:
+    app: iis
+spec:
+  rules:
+  - host: iis.on.windows.in.containers.on.kubernetes.awesome
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: iis-service
+          servicePort: 80

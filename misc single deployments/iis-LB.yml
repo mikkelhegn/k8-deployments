@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iis
+  labels:
+    app: iis
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: iis
+      labels:
+        app: iis
+    spec:
+      containers:
+      - name: iis
+        image: microsoft/iis:windowsservercore
+        ports:
+          - containerPort: 80
+      tolerations:
+      - key: "windows"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule" 
+  selector:
+    matchLabels:
+      app: iis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iis
+spec:
+  type: LoadBalancer 
+  ports:
+  - protocol: TCP
+    port: 80
+  selector:
+    app: iis

@@ -1,0 +1,70 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.1",
+    "parameters": {
+        "clusterName": {
+            "type": "string",
+            "defaultValue": "testjapan",
+            "metadata": {
+                "description": "The name of the Managed Cluster resource."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "The location of the Managed Cluster resource."
+            }
+        },
+        "agentPoolName": {
+            "type": "string",
+            "defaultValue": "newp1",
+            "metadata": {
+                "description": "The name of the agent pool to create or update."
+            }
+        },
+        "agentCount": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Number of nodes in the node pool."
+            }
+        },
+        "agentVMSize": {
+            "type": "string",
+            "defaultValue": "Standard_D3_v2",
+            "metadata": {
+                "description": "VMSize SKU."
+            }
+        },        
+        "vnetSubnetId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The Vnet subnet resource ID for your existing AKS cluster."
+            }
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.ContainerService/managedClusters/agentPools",
+            "name": "[concat(parameters('clusterName'),'/', parameters('agentPoolName'))]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "osDiskSizeGB": 100,
+                "count": "[parameters('agentCount')]",
+                "vmSize": "[parameters('agentVMSize')]",
+                "osType": "Windows",
+                "storageProfile": "ManagedDisks",
+                "type": "VirtualMachineScaleSets",
+                "nodeTaints": [
+                    "windows=true:NoSchedule"
+                ],
+                "maxPods": 30,
+                "vnetSubnetID": "[parameters('vnetSubnetId')]",
+                "orchestratorVersion": "1.14.3"
+            }
+        }
+    ]
+}

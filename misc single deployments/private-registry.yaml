@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample
+  labels:
+   app: sample
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: sample
+      labels:
+        app: sample
+    spec:
+      containers:
+      - name: sample
+        image: mikhegn-microsoft.azurecr.io/iis-color-blue:0.17290.448.29
+        resources:
+          limits:
+            cpu: 1
+            memory: 800m
+          requests:
+            cpu: .1
+            memory: 300m
+        ports:
+          - containerPort: 80
+      tolerations:
+      - key: "windows"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+  selector:
+    matchLabels:
+      app: sample
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample
+spec:
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    port: 80
+  selector:
+    app: sample

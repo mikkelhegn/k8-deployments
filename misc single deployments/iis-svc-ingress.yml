@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iis
+  labels:
+    app: iis
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: iis
+      labels:
+        app: iis
+    spec:
+      containers:
+      - name: iis
+        image: microsoft/iis:windowsservercore
+        ports:
+          - containerPort: 80
+      nodeSelector:
+        beta.kubernetes.io/os: windows
+  selector:
+    matchLabels:
+      app: iis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iis
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: iis
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: iis
+          servicePort: 80
