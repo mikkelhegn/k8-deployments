@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}
+data:
+  Set-SydneyTime.ps1: |
+    cp C:\.ssh\id_rsa C:\
+    $acl = Get-Acl C:\
+    $acl.SetAccessRuleProtection(<#isProtected#>$true, <#preserveInheritance#>$false)
+    $acl.SetAccessRule((New-Object System.Security.AccessControl.FileSystemAccessRule("$env:USERNAME", "FullControl", "Allow")))
+    $acl | Set-Acl C:\ 
+
+    # Remove passphrase from key for non-interactive use
+    ssh-keygen -p -P $env:SSH_PASSPHRASE -N '""' -f C:\
+
+    $sshProc = Start-Process -FilePath ssh.exe -ArgumentList "-oStrictHostKeyChecking=no -t -i C:\\ azureuser@$env:NODE_IP powershell Set-TimeZone `'AUS Eastern Standard Time`'" -Passthru
+    Wait-Process -InputObject $sshProc
+
+    if ($sshProc.ExitCode -ne 0) {
+      Write-Warning "Timezone setter exited with status code $($sshProc.ExitCode)"
+    } else {
+      Write-Host "Set timezone completed"
+      Wait-Event
+    }

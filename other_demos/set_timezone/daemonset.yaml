@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      name: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        name: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: timezonesetter
+        image: mcr.microsoft.com/windows/servercore:ltsc2019 
+        command: ["powershell"]
+        args:
+        - C:\\scripts\\Set-SydneyTime.ps1
+        resources:
+          limits:
+            memory: 200Mi
+            cpu: 1000m
+        volumeMounts:
+        - name: ssh-key
+          mountPath: /.ssh
+        - name: script-mount
+          mountPath: /scripts
+        env:
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: SSH_PASSPHRASE
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-passphrase
+              key: SSH_PASSPHRASE
+      nodeSelector:
+        beta.kubernetes.io/os: windows
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        value: app
+        effect: NoSchedule
+      volumes:
+      - name: ssh-key
+        secret:
+          secretName: {{ .Release.Name }}-ssh-key
+          defaultMode: 0777
+      - name: script-mount
+        configMap:
+          name: {{ .Release.Name }}
