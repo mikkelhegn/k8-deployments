@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sqlweb-deployment
+  labels:
+    app: sqlweb
+spec:
+  replicas: 5
+  template:
+    metadata:
+      name: sqlweb-pod
+      labels:
+        app: sqlweb
+    spec:
+      containers:
+      - name: sqlweb-container
+        image: mikkelhegn/sqlwebapp:1.2
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2048M
+          requests:
+            cpu: 500m
+            memory: 1024M
+        readinessProbe:
+          httpGet:
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      imagePullSecrets:
+      - name: mikkelhegn-docker
+      tolerations:
+      - key: "windows"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+  selector:
+    matchLabels:
+      app: sqlweb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sqlweb-service
+  labels:
+    app: sqlweb
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: sqlweb
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: sqlweb-ingress
+  labels:
+    app: sqlweb
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: sqlweb-service
+          servicePort: 80

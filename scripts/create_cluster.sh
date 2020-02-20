@@ -29,17 +29,10 @@ else
 fi
 
 # Create the cluster
-# --windows-admin-password and --windows-admin-username is the local admin for the Windows worker nodes
-# --generate-ssh-keys generates random ssh keys for SSH access
-# --node-count is for the default Linux node pool
-# --enable-vmss enables multiple node pools
-# --network-plugin azure specifies to use Azure CNI, which is the only supported network plugin for Windows clusters
 echo -e "\n\e[0mCreating cluster \e[1;32m$CLUSTER_NAME...\e[0m"
-az aks create -g $RESOURCE_GROUP --name $CLUSTER_NAME  --windows-admin-password $PASSWORD_WIN --windows-admin-username azureuser --location $LOCATION --generate-ssh-keys --node-count 3 --enable-vmss --network-plugin azure --kubernetes-version $LATEST_PATCH_VER --node-vm-size Standard_D2_v3 --query properties.provisioningState
+az aks create -g $RESOURCE_GROUP --name $CLUSTER_NAME  --windows-admin-password $PASSWORD_WIN --windows-admin-username azureuser --location $LOCATION --generate-ssh-keys --node-count 2 --enable-vmss --network-plugin azure --kubernetes-version $LATEST_PATCH_VER --node-vm-size Standard_D2_v3 --query properties.provisioningState
 
 # Adding a Windows nodepool to the cluster
-# --os-type Windows to indicate the OS type for the node pool (linux or windows)
-# --node-count 3 --node-vm-size Standard_D3_v2 nu,ber of nodes and SKU for the node pool
 echo -e "\e[0mAdding Windows node pool \e[1;32m$WIN_POOL_NAME..."
 az aks nodepool add -g $RESOURCE_GROUP --cluster-name $CLUSTER_NAME --os-type Windows --name $WIN_POOL_NAME --node-count 3 --node-vm-size Standard_D2s_v3 --kubernetes-version $LATEST_PATCH_VER --query properties.provisioningState
 

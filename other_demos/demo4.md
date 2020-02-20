@@ -5,7 +5,7 @@ helm init --service-account tiller
 
 ## Install traefik
 
-helm install --name traefik-release --namespace kube-system stable/traefik --values traefik-config.yaml
+helm install traefik --namespace kube-system stable/traefik --values traefik-config.yaml
 
 ### Get ip
 
