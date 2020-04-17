@@ -9,13 +9,15 @@ export CLUSTER_NAME=${1:-$RNDSTR}
 LOCATION=${2:-EastUS}
 
 # Generate a random password for the Windows nodes
-PASSWORD_WIN=$(cat /dev/urandom | LC_CTYPE=C tr -dc '[:alnum:]' | head -c 20)'!@#$%'
+# This doesn't work on mac -> https://unix.stackexchange.com/questions/45404/why-cant-tr-read-from-dev-urandom-on-osx
+# PASSWORD_WIN=$(cat /dev/urandom | tr -dc '[:alnum:]' | head -c 20)'!@#$%'
+# PASSWORD_WIN="P@SSw0rd!@#$%"
 
 # Setting Windows nodepool name
 WIN_POOL_NAME=winp1
 
 # Getting latest patch of given minor version
-MINOR_VERSION=1.14
+MINOR_VERSION=1.15
 LATEST_PATCH_VER=$(az aks get-versions -l $LOCATION --query "orchestrators[?contains(orchestratorVersion,'$MINOR_VERSION')].orchestratorVersion | [-1]" --output tsv)
 
 # Check if resource group exists, create or return from the script
@@ -34,19 +36,13 @@ fi
 # --enable-vmss enables multiple node pools
 # --network-plugin azure specifies to use Azure CNI, which is the only supported network plugin for Windows clusters
 echo "Creating cluster $CLUSTER_NAME..."
-#az aks create -g $RESOURCE_GROUP --name $CLUSTER_NAME  \
-#    --windows-admin-password $PASSWORD_WIN --windows-admin-username azureuser \
-#    --location $LOCATION --generate-ssh-keys --node-count 3 --network-plugin azure \
-#    --kubernetes-version $LATEST_PATCH_VER --node-vm-size Standard_D2_v3 \
-#    --load-balancer-sku standard \
-#    --enable-cluster-autoscaler --min-count 2 --max-count 3 \
-#    --query properties.provisioningState
-
-az aks create -g $RESOURCE_GROUP --name $CLUSTER_NAME  \
-    --location $LOCATION --generate-ssh-keys --node-count 3 --network-plugin azure \
-    --kubernetes-version $LATEST_PATCH_VER --node-vm-size Standard_D2_v3 \
-    --load-balancer-sku standard \
-    --enable-cluster-autoscaler --min-count 2 --max-count 3 \
+az aks create -g $RESOURCE_GROUP --name $CLUSTER_NAME
+    --location $LOCATION --generate-ssh-keys
+    --enable-managed-identity
+    --network-plugin azure
+    --kubernetes-version $LATEST_PATCH_VER 
+    --node-count 2 --node-vm-size Standard_D2_v3
+    --enable-cluster-autoscaler --min-count 2 --max-count 3
     --query properties.provisioningState
 
 # Adding a Windows nodepool to the cluster

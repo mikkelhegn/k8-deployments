@@ -1,3 +1,6 @@
-# Create cluster with Windows node pool
+# Script
 
-Different means to reach the same goal - an AKS cluster with Windows support
+Just random scripts
+
+- create_cluster.sh - well it creates a cluster with Windows nodes
+- dnstest.sh - testing dns resolution from within a container
