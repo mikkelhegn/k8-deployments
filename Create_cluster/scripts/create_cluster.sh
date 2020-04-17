@@ -34,11 +34,18 @@ fi
 # --enable-vmss enables multiple node pools
 # --network-plugin azure specifies to use Azure CNI, which is the only supported network plugin for Windows clusters
 echo "Creating cluster $CLUSTER_NAME..."
+#az aks create -g $RESOURCE_GROUP --name $CLUSTER_NAME  \
+#    --windows-admin-password $PASSWORD_WIN --windows-admin-username azureuser \
+#    --location $LOCATION --generate-ssh-keys --node-count 3 --network-plugin azure \
+#    --kubernetes-version $LATEST_PATCH_VER --node-vm-size Standard_D2_v3 \
+#    --load-balancer-sku standard \
+#    --enable-cluster-autoscaler --min-count 2 --max-count 3 \
+#    --query properties.provisioningState
+
 az aks create -g $RESOURCE_GROUP --name $CLUSTER_NAME  \
-    --windows-admin-password $PASSWORD_WIN --windows-admin-username azureuser \
-    --location $LOCATION --generate-ssh-keys --node-count 3 --enable-vmss --network-plugin azure \
+    --location $LOCATION --generate-ssh-keys --node-count 3 --network-plugin azure \
     --kubernetes-version $LATEST_PATCH_VER --node-vm-size Standard_D2_v3 \
-    --load-balancer-sku basic \
+    --load-balancer-sku standard \
     --enable-cluster-autoscaler --min-count 2 --max-count 3 \
     --query properties.provisioningState
 

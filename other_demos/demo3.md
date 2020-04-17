@@ -39,6 +39,8 @@ k describe configmap/cluster-autoscaler-status -n kube-system
 k apply -f ca.yaml
 k get deployment aci-helloworld-ca
 k describe nodes | grep -A 4 -E "Name: | Resource"
+k get nodes -w
+k get pods -w
 
 ## Virtual Nodes deployment
 
