@@ -1,0 +1,8 @@
+apiVersion: "aadpodidentity.k8s.io/v1"
+kind: AzureIdentity
+metadata:
+  name: app-gw-identity
+spec:
+  type: 0
+  ResourceID: "/subscriptions/c484c80e-0a6f-4470-86de-697ecee16984/resourcegroups/net-testing/providers/Microsoft.ManagedIdentity/userAssignedIdentities/aadpodidentity"
+  ClientID: "b072b58e-693e-40df-9fe3-48bc0c756b27"
