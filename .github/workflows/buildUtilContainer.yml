@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master ]
     paths:
-      - /single_deployments/utilContainer/
+      - single_deployments/utilContainer/
 
 jobs:
 
