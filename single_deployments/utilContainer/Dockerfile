@@ -9,4 +9,4 @@ RUN apt-get install ssh -y
 
 # Comment
 
-CMD [ "sleep" "infinity" ]
+CMD [ "sleep", "infinity" ]
