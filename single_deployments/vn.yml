@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-vn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-vn
+  template:
+    metadata:
+      labels:
+        app: nginx-vn
+    spec:
+      containers:
+      - name: nginx-vn
+        image: nginx
+      nodeSelector:
+        kubernetes.io/role: agent
+        beta.kubernetes.io/os: linux
+        type: virtual-kubelet
+      tolerations:
+      - key: virtual-kubelet.io/provider
+        operator: Exists
+      - key: azure.com/aci
+        effect: NoSchedule
