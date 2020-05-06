@@ -32,7 +32,7 @@ jobs:
         # Automatically tags the built image with the git short SHA as per the readme
         #tag_with_sha: # optional
         # Path to the build context
-        path: /single_deployments/utilContainer/
+        path: single_deployments/utilContainer/
         # Path to the Dockerfile (Default is '{path}/Dockerfile')
         #dockerfile: 
         # Sets the target stage to build
