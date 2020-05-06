@@ -15,4 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: docker build . --file single_deployments/utilContainer/Dockerfile --tag mikkelhegn/debianutil
+    - name: Push Docker image
+      run: docker login --username mikkelhegn --password ${{ secrets.dockerHubLogin }}
+      run: docker push mikkelhegn/debianutil
