@@ -3,8 +3,8 @@ name: Build Utility Container
 on:
   push:
     branches: [ master ]
-    #paths:
-    #  - single_deployments/utilContainer/
+    paths:
+      - 'single_deployments/utilContainer/**'
 
 jobs:
 
