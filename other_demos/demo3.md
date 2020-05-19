@@ -2,35 +2,27 @@
 
 ## Pre-req
 
-### Create Cluster
-
-./create_cluster.sh cntourdemo westeurope
-
-### Enable VK
-
-k apply -f tillerrbac.yaml
-helm init --service-account tiller
-
-az aks install-connector -g cntourdemo -n cntourdemo --connector-name virtual-kubelet --os-type Both
+az aks enable-addons -g ... -n ... --addons virtual-node --subnet-name vn-subnet
 
 ## Demo starts here
 
 ## HPA
 
 k apply -f hpa.yaml
+k get deployment aci-helloworld-hpa -w
+k top pod
 k autoscale deployment aci-helloworld-hpa --cpu-percent=50 --min=1 --max=10
 k get hpa
 
-takes a while...
+Wait and see it scale down to 1
 
 ## Cluster autoscaler
 
 k describe nodes | grep -A 4 -E "Name: | Resource"
 k apply -f ca.yaml
 k get deployment aci-helloworld-ca
-k describe nodes | grep -A 4 -E "Name: | Resource"
-k get pods
-k describe pod/aci-helloworld-ca-
+k get po
+k describe pod/aci-helloworld-ca
 k describe configmap/cluster-autoscaler-status -n kube-system
 
 ## Virtual Nodes scaling

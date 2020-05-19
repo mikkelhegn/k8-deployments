@@ -15,7 +15,7 @@ PASSWORD_WIN=$(cat /dev/urandom | LC_CTYPE=C tr -dc '[:alnum:]' | head -c 20)'!@
 WIN_POOL_NAME=winp1
 
 # Getting latest patch of given minor version
-MINOR_VERSION=1.14
+MINOR_VERSION=1.17
 LATEST_PATCH_VER=$(az aks get-versions -l $LOCATION --query "orchestrators[?contains(orchestratorVersion,'$MINOR_VERSION')].orchestratorVersion | [-1]" --output tsv)
 
 # Check if resource group exists, create or return from the script
@@ -36,10 +36,8 @@ fi
 echo "Creating cluster $CLUSTER_NAME..."
 az aks create -g $RESOURCE_GROUP --name $CLUSTER_NAME  \
     --windows-admin-password $PASSWORD_WIN --windows-admin-username azureuser \
-    --location $LOCATION --generate-ssh-keys --node-count 3 --enable-vmss --network-plugin azure \
+    --location $LOCATION --generate-ssh-keys --node-count 2 --network-plugin azure \
     --kubernetes-version $LATEST_PATCH_VER --node-vm-size Standard_D2_v3 \
-    --load-balancer-sku basic \
-    --enable-cluster-autoscaler --min-count 2 --max-count 3 \
     --query properties.provisioningState
 
 # Adding a Windows nodepool to the cluster
@@ -47,7 +45,7 @@ az aks create -g $RESOURCE_GROUP --name $CLUSTER_NAME  \
 # --node-count 3 --node-vm-size Standard_D3_v2 nu,ber of nodes and SKU for the node pool
 echo "Adding Windows node pool $WIN_POOL_NAME..."
 az aks nodepool add -g $RESOURCE_GROUP --cluster-name $CLUSTER_NAME \
-    --os-type Windows --name $WIN_POOL_NAME --node-count 3 \
+    --os-type Windows --name $WIN_POOL_NAME --node-count 2 \
     --node-vm-size Standard_D2s_v3 --kubernetes-version $LATEST_PATCH_VER \
     --query properties.provisioningState
 

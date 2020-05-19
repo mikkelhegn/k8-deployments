@@ -30,10 +30,14 @@ az ad sp create-for-rbac --name http://helloparispullsp --scopes /subscriptions/
 
 (az acr credential show -n helloparis)
 
-az container create -g aciDemo -n helloparis --image helloparisacr.azurecr.io/helloparis:v1001 --cpu 1 --memory 1 --registry-login-server helloparisacr.azurecr.io --registry-username --registry-password 
+az container create -g aciDemo -n helloparis --image helloparisacr.azurecr.io/helloparis:v1001 --cpu 1 --memory 1 --registry-login-server helloparisacr.azurecr.io --registry-username af7c9ef3-20f3-43e9-84fc-4fe7d220d519 --registry-password 7ce329de-1667-40b6-952e-3162d2d7d166
 
 az container attach --resource-group aciDemo --name helloparis
 
 ## Clean-up
 
 az group delete --name aciDemo --no-wait
+
+### Shell fix
+
+set -gx PKG_CONFIG_PATH "/usr/local/opt/readline/lib/pkgconfig" 

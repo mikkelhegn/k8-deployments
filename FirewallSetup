@@ -1,0 +1,67 @@
+Firewall setup:
+aksrepos.azurecr.io,*blob.core.windows.net,mcr.microsoft.com,*cdn.mscr.io,*.data.mcr.microsoft.com,management.azure.com,login.microsoftonline.com,ntp.ubuntu.com,packages.microsoft.com,acs-mirror.azureedge.net,
+
+Control Plane:
+*azmk8s.io
+
+Required net rules:
+az network firewall network-rule create --collection-name Required --firewall-name aksfirewall --resource-group aksfirewall --name api1-TCP9000-22 --protocols TCP --destination-ports 22 9000 --destination-fqdns firewallcl-aksfirewall-c484c8-c9128481.hcp.westeurope.azmk8s.io --source-addresses 10.0.0.0/16 --action Allow --priority 100
+az network firewall network-rule create --collection-name Required --firewall-name aksfirewall --resource-group aksfirewall --name api1-UDP1194 --protocols UDP  --destination-ports 1194 --destination-fqdns firewallcl-aksfirewall-c484c8-c9128481.hcp.westeurope.azmk8s.io --source-addresses 10.0.0.0/16
+az network firewall network-rule create --collection-name Required --firewall-name aksfirewall --resource-group aksfirewall --name api2-TCP9000-22 --protocols TCP --destination-ports 22 9000 --destination-fqdns firewallcl-aksfirewall-c484c8-c9128481.tun.westeurope.azmk8s.io --source-addresses 10.0.0.0/16
+az network firewall network-rule create --collection-name Required --firewall-name aksfirewall --resource-group aksfirewall --name api2-UDP1194 --protocols UDP  --destination-ports 1194 --destination-fqdns firewallcl-aksfirewall-c484c8-c9128481.tun.westeurope.azmk8s.io --source-addresses 10.0.0.0/16
+az network firewall network-rule create --collection-name Required --firewall-name aksfirewall --resource-group aksfirewall --name NTP --protocols UDP  --destination-ports 123 --destination-fqdns ntp.ubuntu.com --source-addresses 10.0.0.0/16
+
+Azure Monitor Https:443
+dc.services.visualstudio.com,*.ods.opinsights.azure.com,*.oms.opinsights.azure.com,*.microsoftonline.com,*.monitoring.azure.com
+
+------
+Adding Windows nodes
+
+Failed assuming github is the culprit...
+
+------
+
+DockerHub Http:443 --> For getting an SSH client container on to the cluster...
+*.docker.io,*.docker.com
+
+------
+
+This file is ?moved - not copied? - earlier on...
+2020-04-24T11:51:20.1663932+00:00: Configuring networking with NetworkPlugin:azure
+2020-04-24T11:51:20.1820169+00:00: Using cached version of hns.psm1 - Copying file from c:\akse-cache\hns.psm1 to c:\k\hns.psm1
+
+Later on...
+VERBOSE: GET https://github.com/microsoft/SDN/raw/master/Kubernetes/windows/hns.psm1 with 0-byte payload
+VERBOSE: received 14733-byte response of content type text/plain; charset=utf-8
+
+GitHub Https:443
+github.com,raw.githubusercontent.com
+
+Re-imaging Windows node
+
+------
+
+Re-image successful
+
+Adding a second node pool
+
+...
+
+------
+
+Ubuntu updates Http:80
+security.ubuntu.com,azure.archive.ubuntu.com,changelogs.ubuntu.com
+
+------
+
+I can create Windows VMs without any of the following:
+- TCP:1688 - kms.core.windows.net
+- HTTPS:443 - onegetcdn.azureedge.net,winlayers.blob.core.windows.net,winlayers.cdn.mscr.io,go.microsoft.com
+- HTTP:80 - mp.microsoft.com,www.msftconnecttest.com,ctldl.windowsupdate.com
+
+Other ports being blocked from Windows nodes:
+- TCP:123 - 51.xxx - Windows Server NTP
+- HTTPS:443 - sls.update.microsoft.com
+- TCP:1688 - 23.102.135.246:1688
+- HTTPS:443 - settings-win.data.microsoft.com
+- HTTPS:443 - v10c.events.data.microsoft.com
