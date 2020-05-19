@@ -1,37 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: core1
+  name: core
   labels:
-    app: core1
+    app: core
 spec:
-  replicas: 3
+  replicas: 60
   template:
     metadata:
-      name: core1
+      name: core
       labels:
-        app: core1
+        app: core
     spec:
       containers:
-      - name: core1
+      - name: core
         image: mcr.microsoft.com/windows/servercore:ltsc2019
         command:
           - cmd.exe
         args:
           - /C
           - "ping -t localhost"
-        env:
-          - name: "TZ"
-            value: "America/Denver"
         resources:
           limits:
-            cpu: 500m
-            memory: 1024M
+            memory: 50m
+            cpu: 10m
       tolerations:
       - key: "windows"
         operator: "Equal"
         value: "true"
         effect: "NoSchedule"
+      nodeSelector:
+        "beta.kubernetes.io/os": windows
   selector:
     matchLabels:
-      app: core1
+      app: core

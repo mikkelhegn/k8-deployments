@@ -1,0 +1,22 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'single_deployments/utilContainer/**'
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: docker build . --file single_deployments/utilContainer/Dockerfile --tag mikkelhegn/debianutil
+    - name: Login to Docker hub
+      run: docker login --username mikkelhegn --password ${{ secrets.dockerHubLogin }}
+    - name: Push image
+      run: docker push mikkelhegn/debianutil

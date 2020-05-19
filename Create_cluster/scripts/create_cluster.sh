@@ -9,7 +9,9 @@ export CLUSTER_NAME=${1:-$RNDSTR}
 LOCATION=${2:-EastUS}
 
 # Generate a random password for the Windows nodes
-PASSWORD_WIN=$(cat /dev/urandom | LC_CTYPE=C tr -dc '[:alnum:]' | head -c 20)'!@#$%'
+# This doesn't work on mac -> https://unix.stackexchange.com/questions/45404/why-cant-tr-read-from-dev-urandom-on-osx
+# PASSWORD_WIN=$(cat /dev/urandom | tr -dc '[:alnum:]' | head -c 20)'!@#$%'
+# PASSWORD_WIN="P@SSw0rd!@#$%"
 
 # Setting Windows nodepool name
 WIN_POOL_NAME=winp1

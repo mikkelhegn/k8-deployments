@@ -1,22 +1,43 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: aci-helloworld-hpa
+  name: helloparis-app
 spec:
-  replicas: 5
+  replicas: 1
   selector:
     matchLabels:
-      app: aci-helloworld-hpa
+      app: helloparis-app
   template:
     metadata:
       labels:
-        app: aci-helloworld-hpa
+        app: helloparis-app
     spec:
       containers:
-      - name: aci-helloworld-hpa
-        image: microsoft/aci-helloworld
+      - name: helloparis
+        image: mikhegn-microsoft.azurecr.io/helloparis:v1001
         resources:
           requests:
-            cpu: 250m
+            cpu: 100m
+            memory: 256Mi
           limits:
-            cpu: 500m
+            cpu: 100m
+            memory: 256Mi
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: helloparis-autoscaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: helloparis-app
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50

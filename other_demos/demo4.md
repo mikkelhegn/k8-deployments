@@ -1,8 +1,5 @@
 # Install Helm
 
-k apply -f tillerrbac.yaml
-helm init --service-account tiller
-
 ## Install traefik
 
 helm install traefik --namespace kube-system stable/traefik --values traefik-config.yaml

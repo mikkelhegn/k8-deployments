@@ -1,0 +1,45 @@
+{
+    "apiVersion": "apps/v1",
+    "spec": {
+        "template": {
+            "spec": {
+                "nodeSelector": {
+                    "type": "virtual-kubelet",
+                    "kubernetes.io/role": "agent",
+                    "beta.kubernetes.io/os": "linux"
+                },
+                "tolerations": [
+                    {
+                        "key": "virtual-kubelet.io/provider",
+                        "operator": "Exists"
+                    },
+                    {
+                        "key": "azure.com/aci",
+                        "effect": "NoSchedule"
+                    }
+                ]
+            }
+        }
+    }
+}
+
+{
+    "apiVersion": "pod/v1",
+    "spec": {
+        "nodeSelector": {
+            "type": "virtual-kubelet",
+            "kubernetes.io/role": "agent",
+            "beta.kubernetes.io/os": "linux"
+        },
+        "tolerations": [
+            {
+                "key": "virtual-kubelet.io/provider",
+                "operator": "Exists"
+            },
+            {
+                "key": "azure.com/aci",
+                "effect": "NoSchedule"
+            }
+        ]
+    }
+}
