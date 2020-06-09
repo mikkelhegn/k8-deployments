@@ -27,11 +27,13 @@ spec:
         readinessProbe:
           httpGet:
             port: 80
+            path: /api/healtz
           initialDelaySeconds: 30
           periodSeconds: 10
         livenessProbe:
           httpGet:
             port: 80
+            path: /api/liveness
           initialDelaySeconds: 15
           periodSeconds: 20
       imagePullSecrets:
@@ -41,6 +43,9 @@ spec:
         operator: "Equal"
         value: "true"
         effect: "NoSchedule"
+      nodeSelector:
+        - key: beta.kubernetes.io/os
+          value: "windows"
   selector:
     matchLabels:
       app: sqlweb

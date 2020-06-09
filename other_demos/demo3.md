@@ -2,19 +2,7 @@
 
 ## Pre-req
 
-### Create Cluster
-
-./create_cluster.sh myCluster westeurope
-
-### Connect ACR from demo 1
-
-az aks update -g fasttrack-demo -n fasttrack-demo --attach-acr mikhegn
-
-### Enable VK
-
-k apply -f tillerrbac.yaml
-helm init --service-account tiller
-az aks install-connector -g cntourdemo -n cntourdemo --connector-name virtual-kubelet --os-type Both
+az aks enable-addons -g ... -n ... --addons virtual-node --subnet-name vn-subnet
 
 ### Enable VN
 
@@ -29,18 +17,21 @@ az aks nodepool update -g fasttrack-demo --cluster-name fasttrack-demo -n nodepo
 ## HPA
 
 k apply -f hpa.yaml
-k get hpa -o wide -w
-watch k top pod
-k exec helloparis-app-db585c8b9-wjmn2 dd if=/dev/zero of=/dev/null
+k get deployment aci-helloworld-hpa -w
+k top pod
+k autoscale deployment aci-helloworld-hpa --cpu-percent=50 --min=1 --max=10
+k get hpa
+
+Wait and see it scale down to 1
 
 ## Cluster autoscaler
 
 k describe configmap/cluster-autoscaler-status -n kube-system
 k apply -f ca.yaml
 k get deployment aci-helloworld-ca
-k describe nodes | grep -A 4 -E "Name: | Resource"
-k get nodes -w
-k get pods -w
+k get po
+k describe pod/aci-helloworld-ca
+k describe configmap/cluster-autoscaler-status -n kube-system
 
 ## Virtual Nodes deployment
 
