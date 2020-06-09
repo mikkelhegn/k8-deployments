@@ -1,0 +1,27 @@
+{
+    "name": "string",
+    "type": "Microsoft.ContainerService/managedClusters/agentPools",
+    "apiVersion": "2020-03-01",
+    "properties": {
+      "count": 5,
+      "vmSize": "D2s_v3",
+      "osDiskSizeGB": 100,
+      "vnetSubnetID": "/subscriptions/884fc79a-af47-4cad-bf2f-f5901651c98c/resourceGroups/AKSCluster/providers/Microsoft.Network/virtualNetworks/AKSCluster-vnet/default",
+      "maxPods": 30,
+      "osType": "Windows",
+      "maxCount": 10,
+      "minCount": 3,
+      "enableAutoScaling": true,
+      "type": "VirtualMachineScaleSets",
+      "mode": "User",
+      "orchestratorVersion": "1.15.7",
+      "scaleSetPriority": "Spot",
+      "scaleSetEvictionPolicy": "Delete",
+      "spotMaxPrice": "-1",
+      "nodeLabel": "windowsspotnode=true",
+      "nodeTaints": [
+        "kubernetes.azure.com/scalesetpriority=spot:NoSchedule",
+        "windows=true:NoSchedule"
+      ]
+    }
+  }

@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+        ports:
+        - containerPort: 80
+---
+        
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc
+spec:
+  type: ClusterIP
+  ports:
+  - name: nginx
+    port: 80
+    targetPort: nginx
+  selector:
+    app: nginx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment-2
+spec:
+  selector:
+    matchLabels:
+      app: nginx-2
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx-2
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+        ports:
+        - containerPort: 80
+---
+        
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc-2
+spec:
+  type: ClusterIP
+  ports:
+  - name: nginx-2
+    port: 80
+    targetPort: 80
+  selector:
+    app: nginx-2

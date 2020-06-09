@@ -6,7 +6,7 @@ export RESOURCE_GROUP=${1:-$RNDSTR}
 export CLUSTER_NAME=${1:-$RNDSTR}
 
 # Sets variables with deafults
-LOCATION=${2:-EastUS}
+LOCATION=${2:-westeurope}
 
 # Generate a random password for the Windows nodes
 # This doesn't work on mac -> https://unix.stackexchange.com/questions/45404/why-cant-tr-read-from-dev-urandom-on-osx
@@ -17,7 +17,7 @@ LOCATION=${2:-EastUS}
 WIN_POOL_NAME=winp1
 
 # Getting latest patch of given minor version
-MINOR_VERSION=1.15
+MINOR_VERSION=1.16
 LATEST_PATCH_VER=$(az aks get-versions -l $LOCATION --query "orchestrators[?contains(orchestratorVersion,'$MINOR_VERSION')].orchestratorVersion | [-1]" --output tsv)
 
 # Check if resource group exists, create or return from the script
@@ -36,23 +36,18 @@ fi
 # --enable-vmss enables multiple node pools
 # --network-plugin azure specifies to use Azure CNI, which is the only supported network plugin for Windows clusters
 echo "Creating cluster $CLUSTER_NAME..."
-az aks create -g $RESOURCE_GROUP --name $CLUSTER_NAME
-    --location $LOCATION --generate-ssh-keys
-    --enable-managed-identity
-    --network-plugin azure
-    --kubernetes-version $LATEST_PATCH_VER 
-    --node-count 2 --node-vm-size Standard_D2_v3
-    --enable-cluster-autoscaler --min-count 2 --max-count 3
-    --query properties.provisioningState
+az aks create -g $RESOURCE_GROUP --name $CLUSTER_NAME \
+    --location $LOCATION --generate-ssh-keys \
+    --enable-managed-identity --network-plugin azure \
+    --kubernetes-version $LATEST_PATCH_VER
 
 # Adding a Windows nodepool to the cluster
 # --os-type Windows to indicate the OS type for the node pool (linux or windows)
 # --node-count 3 --node-vm-size Standard_D3_v2 nu,ber of nodes and SKU for the node pool
 echo "Adding Windows node pool $WIN_POOL_NAME..."
 az aks nodepool add -g $RESOURCE_GROUP --cluster-name $CLUSTER_NAME \
-    --os-type Windows --name $WIN_POOL_NAME --node-count 3 \
-    --node-vm-size Standard_D2s_v3 --kubernetes-version $LATEST_PATCH_VER \
-    --query properties.provisioningState
+    --os-type Windows --name $WIN_POOL_NAME --node-count 2 \
+    --kubernetes-version $LATEST_PATCH_VER
 
 echo "Getting credentials for $CLUSTER_NAME..."
 az aks get-credentials -n $CLUSTER_NAME -g $RESOURCE_GROUP

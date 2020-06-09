@@ -1,6 +1,21 @@
 {
     "cSpell.ignoreWords": [
+        "aspnet",
+        "aspnetapp",
+        "azure",
+        "com",
+        "id",
+        "kubernetes",
         "ltsc",
-        "servercore"
+        "no",
+        "scalesetpriority",
+        "schedule",
+        "servercore",
+        "spot",
+        "subnet",
+        "true",
+        "vnet",
+        "windowsspot",
+        "windowsspotnode"
     ]
 }

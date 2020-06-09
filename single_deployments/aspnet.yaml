@@ -1,41 +1,48 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sample
+  name: aspnet-deployment
   labels:
-    app: sample
+    app: aspnet-app
 spec:
-  replicas: 20
+  replicas: 2
   template:
     metadata:
-      name: sample
+      name: aspnet-pod
       labels:
-        app: sample
+        app: aspnet-app
     spec:
+      containers:
+      - name: aspnet-container
+        image: mcr.microsoft.com/dotnet/framework/samples:aspnetapp
+        ports:
+          - containerPort: 80
+        resources:
+          requests:
+            cpu: "1"
+            memory: "1024Mi"
+          limits:
+            cpu: "2"
+            memory: "2048Mi"
       nodeSelector:
-        "beta.kubernetes.io/os": windows
+        "kubernetes.io/os": windows
       tolerations:
       - key: "windows"
         operator: "Equal"
         value: "true"
-        effect: "NoSchedule" 
-      containers:
-      - name: sample
-        image: mcr.microsoft.com/dotnet/framework/samples:aspnetapp
-        ports:
-          - containerPort: 80
+        effect: "NoSchedule"
   selector:
     matchLabels:
-      app: sample
+      app: aspnet-app
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: sample
+  name: aspnet-svc
 spec:
   type: LoadBalancer
   ports:
   - protocol: TCP
     port: 80
   selector:
-    app: sample
+    app: aspnet-app
