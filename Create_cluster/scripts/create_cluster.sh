@@ -4,6 +4,7 @@
 RNDSTR=aks-${RANDOM}
 export RESOURCE_GROUP=${1:-$RNDSTR}
 export CLUSTER_NAME=${1:-$RNDSTR}
+export K8VERSION=${3:-0}
 
 # Sets variables with deafults
 LOCATION=${2:-westeurope}
@@ -17,8 +18,12 @@ LOCATION=${2:-westeurope}
 WIN_POOL_NAME=winp1
 
 # Getting latest patch of given minor version
-MINOR_VERSION=1.16
-LATEST_PATCH_VER=$(az aks get-versions -l $LOCATION --query "orchestrators[?contains(orchestratorVersion,'$MINOR_VERSION')].orchestratorVersion | [-1]" --output tsv)
+if [ $K8VERSION == 0 ]
+then
+    MINOR_VERSION=1.16
+    K8VERSION=$(az aks get-versions -l $LOCATION --query "orchestrators[?contains(orchestratorVersion,'$MINOR_VERSION')].orchestratorVersion | [-1]" --output tsv)
+fi
+echo "Using version $K8VERSION"
 
 # Check if resource group exists, create or return from the script
 echo "Creating resource group $RESOURCE_GROUP in $LOCATION..."
@@ -39,7 +44,7 @@ echo "Creating cluster $CLUSTER_NAME..."
 az aks create -g $RESOURCE_GROUP --name $CLUSTER_NAME \
     --location $LOCATION --generate-ssh-keys \
     --enable-managed-identity --network-plugin azure \
-    --kubernetes-version $LATEST_PATCH_VER
+    --kubernetes-version $K8VERSION
 
 # Adding a Windows nodepool to the cluster
 # --os-type Windows to indicate the OS type for the node pool (linux or windows)
@@ -47,7 +52,7 @@ az aks create -g $RESOURCE_GROUP --name $CLUSTER_NAME \
 echo "Adding Windows node pool $WIN_POOL_NAME..."
 az aks nodepool add -g $RESOURCE_GROUP --cluster-name $CLUSTER_NAME \
     --os-type Windows --name $WIN_POOL_NAME --node-count 2 \
-    --kubernetes-version $LATEST_PATCH_VER
+    --kubernetes-version $K8VERSION
 
 echo "Getting credentials for $CLUSTER_NAME..."
 az aks get-credentials -n $CLUSTER_NAME -g $RESOURCE_GROUP
