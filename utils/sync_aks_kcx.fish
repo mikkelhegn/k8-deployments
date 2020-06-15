@@ -7,7 +7,7 @@ set removeCount 0
 argparse --name=reset 'r/reset' -- $argv
 
 # Get clusters
-set aksClusters (az aks list | jq '.[] | "\(.name);\(.resourceGroup)"')
+set aksClusters (az aks list -o json | jq '.[] | "\(.name);\(.resourceGroup)"')
 echo 'I: Found '(count $aksClusters)' clusters in Azure'
 set kubectxClusters (kubectx)
 
