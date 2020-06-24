@@ -15,12 +15,25 @@ spec:
       containers:
       - name: nginx-vn
         image: nginx
-      nodeSelector:
-        kubernetes.io/role: agent
-        beta.kubernetes.io/os: linux
-        type: virtual-kubelet
+        resources:
+          requests:
+            cpu: '1'
+            memory: '2Gi'
+          limits:
+            cpu: '1'
+            memory: '2Gi'
       tolerations:
       - key: virtual-kubelet.io/provider
-        operator: Exists
-      - key: azure.com/aci
+        value: azure
+        operator: Equal
         effect: NoSchedule
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: type
+                operator: NotIn
+                values:
+                - virtual-kubelet
