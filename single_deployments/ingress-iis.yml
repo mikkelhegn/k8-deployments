@@ -3,12 +3,12 @@ kind: Ingress
 metadata:
   name: test-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: nginx
 spec:
   rules:
   - http:
       paths:
       - path: /
         backend:
-          serviceName: iis
+          serviceName: nginx
           servicePort: 80
