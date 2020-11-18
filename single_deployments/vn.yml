@@ -34,6 +34,6 @@ spec:
             preference:
               matchExpressions:
               - key: type
-                operator: NotIn
+                operator: In
                 values:
                 - virtual-kubelet

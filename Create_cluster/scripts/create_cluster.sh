@@ -20,7 +20,7 @@ WIN_POOL_NAME=winp1
 # Getting latest patch of given minor version
 if [ $K8VERSION == 0 ]
 then
-    MINOR_VERSION=1.16
+    MINOR_VERSION=1.18
     K8VERSION=$(az aks get-versions -l $LOCATION --query "orchestrators[?contains(orchestratorVersion,'$MINOR_VERSION')].orchestratorVersion | [-1]" --output tsv)
 fi
 echo "Using version $K8VERSION"
@@ -49,10 +49,10 @@ az aks create -g $RESOURCE_GROUP --name $CLUSTER_NAME \
 # Adding a Windows nodepool to the cluster
 # --os-type Windows to indicate the OS type for the node pool (linux or windows)
 # --node-count 3 --node-vm-size Standard_D3_v2 nu,ber of nodes and SKU for the node pool
-echo "Adding Windows node pool $WIN_POOL_NAME..."
-az aks nodepool add -g $RESOURCE_GROUP --cluster-name $CLUSTER_NAME \
-    --os-type Windows --name $WIN_POOL_NAME --node-count 2 \
-    --kubernetes-version $K8VERSION
+# echo "Adding Windows node pool $WIN_POOL_NAME..."
+#az aks nodepool add -g $RESOURCE_GROUP --cluster-name $CLUSTER_NAME \
+#    --os-type Windows --name $WIN_POOL_NAME --node-count 2 \
+#    --kubernetes-version $K8VERSION
 
 echo "Getting credentials for $CLUSTER_NAME..."
 az aks get-credentials -n $CLUSTER_NAME -g $RESOURCE_GROUP

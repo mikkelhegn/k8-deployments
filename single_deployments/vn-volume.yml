@@ -17,6 +17,9 @@ spec:
         image: microsoft/aci-helloworld
         ports:
         - containerPort: 80
+        volumeMounts:
+        - mountPath: /aci/logs/
+          name: azure
       nodeSelector:
         kubernetes.io/role: agent
         beta.kubernetes.io/os: linux
@@ -26,7 +29,9 @@ spec:
         operator: Exists
       - key: azure.com/aci
         effect: NoSchedule
-      volumeMounts:
-      - mountPath: /aci/logs/
-        name: filesharevolume
-          storageAccountKey: <Storage account key>
+      volumes:
+      - name: azure
+        azureFile:
+          secretName: azure-secret
+          shareName: vn-share
+          readOnly: false
