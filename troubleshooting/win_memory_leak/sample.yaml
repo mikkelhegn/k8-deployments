@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: memtest
+spec:
+  replicas: 10
+  serviceName: headless
+  selector:
+    matchLabels:
+      app: memtest
+  template:
+    metadata:
+      name: memtest
+      labels:
+        app: memtest
+    spec:
+      containers:
+      - name: web
+        image: mcr.microsoft.com/dotnet/framework/samples:aspnetapp
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+      nodeSelector:
+        kubernetes.io/os: windows

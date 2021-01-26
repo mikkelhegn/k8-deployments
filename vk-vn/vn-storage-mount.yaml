@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vn-storage-pod
+spec:
+  containers:
+  - image: nginx:1.15.5
+    name: vn-storage-pod
+    resources:
+      requests:
+        cpu: '1'
+        memory: '2'
+      limits:
+        cpu: '1'
+        memory: '2'
+    volumeMounts:
+      - name: azure
+        mountPath: /mnt/azure
+  volumes:
+  - name: azure
+    azureFile:
+      secretName: azurefile-secret
+      shareName: akssharewe
+      readOnly: false
+  tolerations:
+    - key: virtual-kubelet.io/provider
+      value: azure
+      operator: Equal
+      effect: NoSchedule
+  nodeSelector:
+      kubernetes.io/role: agent
+      beta.kubernetes.io/os: linux
+      type: virtual-kubelet
