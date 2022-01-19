@@ -1,6 +1,6 @@
 # Kubernetes Deployments
 
-This repository contains a variety of deployments and scripts for demoing and playing with AKS. A lot of this is focused on Windows and integrating Windows workloads in an AKS cluster.
+This repository contains a variety of deployments and scripts for demoing and playing with AKS.
 
 ## Disclaimer
 
@@ -15,6 +15,8 @@ I hope you can use some of this for great experiences!!!
 
 Public AKS documentation to be found here: https://docs.microsoft.com/en-us/azure/aks/
 
-## Status stuff
+## Status
+
+[Util Container status:](single_deployments/utilContainer/Dockerfile)
 
 ![Docker Image CI](https://github.com/MikkelHegn/k8-deployments/workflows/Docker%20Image%20CI/badge.svg)
